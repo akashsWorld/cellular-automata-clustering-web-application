@@ -10,6 +10,10 @@
   <packaging>pom</packaging>
 
   <name>clustering-algorithm-web</name>
+  <modules>
+    <module>data-parser</module>
+    <module>operational-data-modifier</module>
+  </modules>
 
 
   <properties>

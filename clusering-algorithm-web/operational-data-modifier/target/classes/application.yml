@@ -1,0 +1,6 @@
+server:
+  port: 8502
+
+spring:
+  application:
+    name: data-modifier
