@@ -1,4 +1,4 @@
-package com.akash.modifier;
+package com.akash.client.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +11,6 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ErrorMessage {
-    private HttpStatus httpStatusCode;
+    private HttpStatus httpStatus;
     private String message;
 }

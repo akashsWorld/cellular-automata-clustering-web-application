@@ -9,26 +9,24 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.akash.modifier</groupId>
-    <artifactId>operational-data-modifier</artifactId>
+    <groupId>com.akash.client</groupId>
+    <artifactId>client</artifactId>
+    <version>1.0</version>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <version>3.2.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.akash.client</groupId>
-            <artifactId>client</artifactId>
-            <version>1.0</version>
-        </dependency>
-    </dependencies>
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
