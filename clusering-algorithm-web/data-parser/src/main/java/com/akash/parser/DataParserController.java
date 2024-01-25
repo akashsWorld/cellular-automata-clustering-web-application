@@ -20,13 +20,13 @@ public class DataParserController {
         return ResponseEntity.ok(dataParserService.convertNumericalDataToCategoricalData(rawData,divisions));
     }
 
-    @GetMapping("uniqueConfiguration")
-    public ResponseEntity<ArrayList<String>> getUniqueConfiguration(ArrayList<ArrayList<String>> operationalData){
+    @RequestMapping (value = "uniqueConfiguration",method = {RequestMethod.GET,RequestMethod.POST})
+    public ResponseEntity<ArrayList<String>> getUniqueConfiguration(@RequestBody ArrayList<ArrayList<String>> operationalData){
         return ResponseEntity.ok(dataParserService.getUniqueConfiguration(operationalData));
     }
 
-    @GetMapping("objectWiseData")
-    public ResponseEntity<ArrayList<String>> getObjectWiseData(ArrayList<ArrayList<String>> operationalData){
+    @RequestMapping(value="objectWiseData",method = {RequestMethod.GET,RequestMethod.POST})
+    public ResponseEntity<ArrayList<String>> getObjectWiseData(@RequestBody ArrayList<ArrayList<String>> operationalData){
         return ResponseEntity.ok(dataParserService.getObjectWiseData(operationalData));
     }
 }
