@@ -27,18 +27,10 @@ public class DataParserService {
     }
 
     public ArrayList<String> getUniqueConfiguration(ArrayList<ArrayList<String>> operationalData) {
-        if(operationalData==null)
-            throw new NullPointerException("Given data is invalid");
-        if(operationalData.isEmpty())
-            throw new DataInvalidException("Given data is invalid");
         return ParseToCategoricalData.getUniqueConfigurations(operationalData);
     }
 
     public ArrayList<String> getObjectWiseData(ArrayList<ArrayList<String>> operationalData) {
-        if(operationalData==null)
-            throw new NullPointerException("Given data is invalid");
-        if(operationalData.isEmpty())
-            throw new DataInvalidException("Given data is invalid");
         return ParseToCategoricalData.getDataFromAttributeToObjectWise(operationalData);
     }
 }

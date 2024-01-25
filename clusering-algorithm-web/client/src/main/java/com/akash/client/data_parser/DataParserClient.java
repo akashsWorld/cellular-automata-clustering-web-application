@@ -1,5 +1,6 @@
 package com.akash.client.data_parser;
 
+import com.akash.client.GlobalResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,9 +11,9 @@ import java.util.ArrayList;
 @FeignClient(name ="data-server" ,url = "localhost:8501")
 public interface DataParserClient {
 
-    @RequestMapping(value = "parser/parseData/uniqueConfiguration",method = RequestMethod.GET)
-    public ResponseEntity<ArrayList<String>> getUniqueConfiguration(ArrayList<ArrayList<String>> operationalData);
+    @RequestMapping (value = "parser/parseData/uniqueConfiguration",method = {RequestMethod.POST}, consumes = "application/json",produces = "application/json")
+    ResponseEntity<ArrayList<String>> getUniqueConfiguration(ArrayList<ArrayList<String>> operationalData);
 
-    @RequestMapping(value = "parser/parseData/objectWiseData",method = RequestMethod.GET)
-    public ResponseEntity<ArrayList<String>> getObjectWiseData(ArrayList<ArrayList<String>> operationalData);
+    @RequestMapping(value="parser/parseData/objectWiseData",method = {RequestMethod.POST}, consumes = "application/json",produces = "application/json")
+    ResponseEntity<ArrayList<String>> getObjectWiseData(ArrayList<ArrayList<String>> operationalData);
 }

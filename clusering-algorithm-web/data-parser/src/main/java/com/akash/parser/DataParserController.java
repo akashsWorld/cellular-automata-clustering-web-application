@@ -1,8 +1,10 @@
 package com.akash.parser;
 
 
+import com.akash.client.GlobalResponse;
 import com.akash.parser.responses.ParseDataResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,17 +18,25 @@ public class DataParserController {
 
     @PostMapping("parse")
     public ResponseEntity<ParseDataResponse> parseData(@RequestBody ArrayList<ArrayList<String>> rawData,
-                                                       @RequestParam Integer divisions){
-        return ResponseEntity.ok(dataParserService.convertNumericalDataToCategoricalData(rawData,divisions));
+                                                                       @RequestParam Integer divisions){
+        ParseDataResponse parseDataResponse = dataParserService.convertNumericalDataToCategoricalData(rawData,divisions);
+
+        return ResponseEntity.status(HttpStatus.OK).body(parseDataResponse);
     }
 
-    @RequestMapping (value = "uniqueConfiguration",method = {RequestMethod.GET,RequestMethod.POST})
+    @RequestMapping (value = "uniqueConfiguration",method = {RequestMethod.POST}, consumes = "application/json",produces = "application/json")
     public ResponseEntity<ArrayList<String>> getUniqueConfiguration(@RequestBody ArrayList<ArrayList<String>> operationalData){
-        return ResponseEntity.ok(dataParserService.getUniqueConfiguration(operationalData));
+
+        ArrayList<String> uniqueConfiguration = dataParserService.getUniqueConfiguration(operationalData);
+
+        return ResponseEntity.status(HttpStatus.OK).body(uniqueConfiguration);
     }
 
-    @RequestMapping(value="objectWiseData",method = {RequestMethod.GET,RequestMethod.POST})
+    @RequestMapping(value="objectWiseData",method = {RequestMethod.POST}, consumes = "application/json",produces = "application/json")
     public ResponseEntity<ArrayList<String>> getObjectWiseData(@RequestBody ArrayList<ArrayList<String>> operationalData){
-        return ResponseEntity.ok(dataParserService.getObjectWiseData(operationalData));
+
+        ArrayList<String> objectWiseData = dataParserService.getObjectWiseData(operationalData);
+
+        return ResponseEntity.status(HttpStatus.OK).body(objectWiseData);
     }
 }

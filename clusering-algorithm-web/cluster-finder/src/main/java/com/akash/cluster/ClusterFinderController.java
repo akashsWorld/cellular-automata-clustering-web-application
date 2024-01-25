@@ -17,7 +17,7 @@ public class ClusterFinderController {
     private final ClusterFinderService clusterFinderService;
 
     @PostMapping("levelZero")
-    public ResponseEntity<ArrayList<Integer>> findClusterAtLevelZero(@RequestBody ArrayList<ArrayList<String>> operationalData){
+    public ResponseEntity<ArrayList<ArrayList<Integer>>> findClusterAtLevelZero(@RequestBody ArrayList<ArrayList<String>> operationalData){
         return ResponseEntity.ok(clusterFinderService.findClusterAtLevelZero(operationalData));
     }
 }
