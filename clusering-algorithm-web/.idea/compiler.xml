@@ -10,6 +10,7 @@
         <module name="operational-data-modifier" />
         <module name="client" />
         <module name="data-parser" />
+        <module name="cluster-finder" />
       </profile>
     </annotationProcessing>
   </component>

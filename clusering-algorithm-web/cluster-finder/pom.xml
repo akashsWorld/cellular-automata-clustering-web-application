@@ -9,23 +9,13 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.akash.parser</groupId>
-    <artifactId>data-parser</artifactId>
+    <groupId>com.akash.cluster</groupId>
+    <artifactId>cluster-finder</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.akash.clustering</groupId>
-            <artifactId>cellular-automata-based-clustering</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.akash.client</groupId>
-            <artifactId>client</artifactId>
-            <version>1.0</version>
         </dependency>
     </dependencies>
 
