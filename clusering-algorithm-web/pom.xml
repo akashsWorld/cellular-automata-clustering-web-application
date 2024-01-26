@@ -16,6 +16,7 @@
     <module>client</module>
     <module>cluster-finder</module>
     <module>eureka-server</module>
+      <module>cellular-automata-model</module>
   </modules>
 
 

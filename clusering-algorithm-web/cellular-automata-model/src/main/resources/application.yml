@@ -1,0 +1,11 @@
+server:
+    port: 8504
+
+spring:
+    application:
+        name: cellular-automata
+    
+# eureka:
+#     client:
+#         fetch-registry: false
+#         register-with-eureka: false

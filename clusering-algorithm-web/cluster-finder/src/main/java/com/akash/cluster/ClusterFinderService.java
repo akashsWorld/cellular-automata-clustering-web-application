@@ -1,8 +1,16 @@
 package com.akash.cluster;
 
 
+import com.akash.caclustering.boundaries.Boundaries;
+import com.akash.caclustering.clustering.Clusters;
+import com.akash.caclustering.clusteringException.RuleInvalidException;
+import com.akash.caclustering.utility.Boundary;
 import com.akash.caclustering.utility.HelperUtilityMethods;
+import com.akash.caclustering.utility.Pair;
+import com.akash.client.cellular_automata.CAClient;
+import com.akash.client.cellular_automata.CARequest;
 import com.akash.client.data_parser.DataParserClient;
+import com.akash.client.exception.BoundaryNotFoundException;
 import com.akash.client.exception.DataInvalidException;
 import com.akash.client.exception.ResponseInvalidException;
 import lombok.RequiredArgsConstructor;
@@ -10,12 +18,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ClusterFinderService {
 
     private final DataParserClient dataParserClient;
+
+    private final CAClient caClient;
+
+    private final HelperMethods helperMethods;
 
     public ArrayList<ArrayList<Integer>> findClusterAtLevelZero(ArrayList<ArrayList<String>> operationalData){
 
@@ -39,5 +52,41 @@ public class ClusterFinderService {
         ArrayList<String> objectWiseData = objectWiseDataResponse.getBody();
 
         return HelperUtilityMethods.convertObjectWiseDataToClusterWise(objectWiseData,uniqueConfiguration);
+    }
+
+    public ArrayList<ArrayList<Integer>> findClusterAtLevelOne(
+            ArrayList<ArrayList<String>> operationalData,
+            Integer neighbourHood,
+            List<Integer> groups,
+            Boolean isRandom,
+            String boundaryName
+    ) throws RuleInvalidException {
+        if(boundaryName==null)
+            throw new BoundaryNotFoundException("Boundary is not valid");
+        final Boundary boundary = switch (boundaryName) {
+            case "nullBoundary" -> Boundaries::nullBoundary;
+            case "adiabaticBoundary" -> Boundaries::adiabaticBoundary;
+            case "periodicBoundary" -> Boundaries::periodicBoundary;
+            case "intermediateBoundary" -> Boundaries::intermediateBoundary;
+            case "reflexiveBoundary" -> Boundaries::reflexiveBoundary;
+            case "notNullBoundary" -> Boundaries::notNullBoundary;
+            default -> throw new BoundaryNotFoundException("Boundary not valid");
+        };
+
+        CARequest caRequest = new CARequest(boundary,operationalData);
+
+        if(groups==null){
+            groups = helperMethods.findGroups(operationalData.size());
+        }
+
+
+        ResponseEntity<Pair<ArrayList<String>,Integer>> primaryClustersArrayIndexWiseWithClusterNumber =
+                caClient.findPrimaryClusters(caRequest,neighbourHood,groups,isRandom);
+
+        if(primaryClustersArrayIndexWiseWithClusterNumber.getBody()==null){
+            throw new ResponseInvalidException("The given response cluster not valid.");
+        }
+
+        return Clusters.groupObjectsRespectToClusters(primaryClustersArrayIndexWiseWithClusterNumber.getBody().getFirst());
     }
 }

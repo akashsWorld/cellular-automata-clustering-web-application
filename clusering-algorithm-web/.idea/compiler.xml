@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="operational-data-modifier" />
         <module name="client" />
+        <module name="cellular-automata-model" />
         <module name="data-parser" />
         <module name="eureka-server" />
         <module name="cluster-finder" />
