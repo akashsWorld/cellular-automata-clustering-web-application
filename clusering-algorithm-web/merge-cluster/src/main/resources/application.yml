@@ -1,0 +1,6 @@
+server:
+  port: 8505
+
+spring:
+  application:
+    name: merge-cluster

@@ -1,24 +1,29 @@
 package com.akash.cluster;
 
 
-import com.akash.caclustering.boundaries.Boundaries;
 import com.akash.caclustering.clustering.Clusters;
 import com.akash.caclustering.clusteringException.RuleInvalidException;
-import com.akash.caclustering.utility.Boundary;
 import com.akash.caclustering.utility.HelperUtilityMethods;
 import com.akash.caclustering.utility.Pair;
 import com.akash.client.cellular_automata.CAClient;
+import com.akash.client.cellular_automata.CAMergeClustersRequest;
 import com.akash.client.cellular_automata.CARequest;
 import com.akash.client.data_parser.DataParserClient;
 import com.akash.client.exception.BoundaryNotFoundException;
 import com.akash.client.exception.DataInvalidException;
 import com.akash.client.exception.ResponseInvalidException;
+import com.akash.client.merge_cluster.MergeArrayRequest;
+import com.akash.client.merge_cluster.MergeClusterRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +34,9 @@ public class ClusterFinderService {
     private final CAClient caClient;
 
     private final ClusterHelperMethods helperMethods;
+
+    private final RestTemplate restTemplate;
+    private static final String MERGE_CLUSTER_URL ="localhost:8505/mergeCluster/merge/";
 
     public ArrayList<ArrayList<Integer>> findClusterAtLevelZero(ArrayList<ArrayList<String>> operationalData){
 
@@ -80,5 +88,73 @@ public class ClusterFinderService {
         }
 
         return Clusters.groupObjectsRespectToClusters(primaryClustersArrayIndexWiseWithClusterNumber.getBody().getFirst());
+    }
+
+    public ArrayList<ArrayList<Integer>> findClustersAtLevelTwo(
+            CAMergeClustersRequest caMergeClustersRequest,
+            ArrayList<Integer> selectedIndexes,
+            String boundaryName,
+            Integer neighbourHood
+    ) throws RuleInvalidException {
+
+        ArrayList<ArrayList<String>> selectedAttributes = helperMethods.selectAttributes(
+                caMergeClustersRequest.getOperationalData(),
+                selectedIndexes
+                );
+
+        CARequest caRequest = new CARequest(boundaryName,selectedAttributes);
+
+        ResponseEntity<Pair<ArrayList<String>,Integer>> auxiliaryClusterResponse = caClient
+                .findAuxiliaryClusters(caRequest,neighbourHood);
+
+
+        if(auxiliaryClusterResponse.getBody()==null)
+            throw new ResponseInvalidException("Auxiliary cluster response invalid");
+
+        Pair<ArrayList<String>,Integer> auxiliaryClusterWithClusterNumber = auxiliaryClusterResponse.getBody();
+
+//        Calculate the Merge array to check merge ability.
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        MergeArrayRequest mergeArrayRequest = new MergeArrayRequest(
+                caMergeClustersRequest.getPrimaryCluster(),
+                Clusters.groupObjectsRespectToClusters(auxiliaryClusterWithClusterNumber.getFirst())
+                );
+
+        HttpEntity<MergeArrayRequest> requestEntity = new HttpEntity<>(mergeArrayRequest,httpHeaders);
+
+        ResponseEntity<ArrayList<ArrayList<Double>>> mergeArrayResponse = restTemplate.exchange(
+                MERGE_CLUSTER_URL+"geMergeArray",
+                HttpMethod.POST,
+                requestEntity,
+                new ParameterizedTypeReference<>() {
+                });
+
+        if(!mergeArrayResponse.getStatusCode().is2xxSuccessful() || mergeArrayResponse.getBody()==null)
+            throw new ResponseInvalidException("Merge Array response invalid");
+
+
+        ArrayList<ArrayList<Double>> mergeArray = mergeArrayResponse.getBody();
+
+        MergeClusterRequest mergeClusterRequest = new MergeClusterRequest(
+                mergeArray,
+                caMergeClustersRequest.getPrimaryCluster()
+        );
+
+        requestEntity = new HttpEntity<>(mergeArrayRequest,httpHeaders);
+
+        ResponseEntity<ArrayList<ArrayList<Integer>>> afterMergeResponse = restTemplate.exchange(
+                MERGE_CLUSTER_URL+"mergeClusters",
+                HttpMethod.POST,
+                requestEntity,
+                new ParameterizedTypeReference<>() {
+                });
+
+        if(!afterMergeResponse.getStatusCode().is2xxSuccessful() || afterMergeResponse.getBody()==null)
+            throw new ResponseInvalidException("Merge Array response invalid");
+
+        return afterMergeResponse.getBody();
     }
 }

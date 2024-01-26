@@ -1,6 +1,7 @@
 package com.akash.cluster;
 
 import com.akash.caclustering.clusteringException.RuleInvalidException;
+import com.akash.client.cellular_automata.CAMergeClustersRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +18,12 @@ public class ClusterFinderController {
     private final ClusterFinderService clusterFinderService;
 
     @PostMapping("levelZero")
-    public ResponseEntity<ArrayList<ArrayList<Integer>>> findClusterAtLevelZero(@RequestBody ArrayList<ArrayList<String>> operationalData){
+    public ResponseEntity<ArrayList<ArrayList<Integer>>> findClustersAtLevelZero(@RequestBody ArrayList<ArrayList<String>> operationalData){
         return ResponseEntity.ok(clusterFinderService.findClusterAtLevelZero(operationalData));
     }
 
-    @PostMapping("levelTwo")
-    public ResponseEntity<ArrayList<ArrayList<Integer>>> findPrimaryCluster(
+    @GetMapping("levelOne")
+    public ResponseEntity<ArrayList<ArrayList<Integer>>> findClustersAtLevelOne(
             @RequestBody ArrayList<ArrayList<String>> operationalData,
             @RequestParam(name = "groups",required = false) List<Integer> groups,
             @RequestParam(name = "neighbourHood",required = false,defaultValue = "3") Integer neighbourHood,
@@ -42,4 +43,21 @@ public class ClusterFinderController {
                         boundary
                 ));
     }
+
+    @GetMapping("levelTwo")
+    public ResponseEntity<ArrayList<ArrayList<Integer>>> findClustersAtLevelTwo(
+            @RequestBody CAMergeClustersRequest mergeClusterRequest,
+            @RequestParam(name = "boundary") String boundaryName,
+            @RequestParam(name = "neighbourHood") Integer neighbourHood,
+            @RequestParam(name= "selectIndexes") ArrayList<Integer> selectIndexes
+    ) throws RuleInvalidException {
+        return ResponseEntity.status(HttpStatus.OK).body(clusterFinderService.findClustersAtLevelTwo(
+                mergeClusterRequest,
+                selectIndexes,
+                boundaryName,
+                neighbourHood
+        ));
+    }
+
+
 }

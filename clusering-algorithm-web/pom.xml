@@ -17,6 +17,7 @@
     <module>cluster-finder</module>
     <module>eureka-server</module>
       <module>cellular-automata-model</module>
+      <module>merge-cluster</module>
   </modules>
 
 

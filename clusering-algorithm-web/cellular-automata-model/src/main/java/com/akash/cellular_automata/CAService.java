@@ -23,7 +23,7 @@ public class CAService {
 //        TODO: add data filter.
 
         Clusters  clusters = new ClusterFinder(neighbourHood, caHelper.getBoundary(caRequest.getBoundaryName()));
-
+        
         return clusters.getClusters(caRequest.getOperationalData());
     }
 

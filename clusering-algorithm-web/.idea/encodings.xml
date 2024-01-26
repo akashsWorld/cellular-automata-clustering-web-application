@@ -11,6 +11,8 @@
     <file url="file://$PROJECT_DIR$/data-parser/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/eureka-server/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/eureka-server/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/merge-cluster/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/merge-cluster/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/operational-data-modifier/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/operational-data-modifier/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
