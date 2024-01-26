@@ -28,7 +28,7 @@ public class ClusterFinderService {
 
     private final CAClient caClient;
 
-    private final HelperMethods helperMethods;
+    private final ClusterHelperMethods helperMethods;
 
     public ArrayList<ArrayList<Integer>> findClusterAtLevelZero(ArrayList<ArrayList<String>> operationalData){
 
@@ -61,19 +61,11 @@ public class ClusterFinderService {
             Boolean isRandom,
             String boundaryName
     ) throws RuleInvalidException {
-        if(boundaryName==null)
-            throw new BoundaryNotFoundException("Boundary is not valid");
-        final Boundary boundary = switch (boundaryName) {
-            case "nullBoundary" -> Boundaries::nullBoundary;
-            case "adiabaticBoundary" -> Boundaries::adiabaticBoundary;
-            case "periodicBoundary" -> Boundaries::periodicBoundary;
-            case "intermediateBoundary" -> Boundaries::intermediateBoundary;
-            case "reflexiveBoundary" -> Boundaries::reflexiveBoundary;
-            case "notNullBoundary" -> Boundaries::notNullBoundary;
-            default -> throw new BoundaryNotFoundException("Boundary not valid");
-        };
 
-        CARequest caRequest = new CARequest(boundary,operationalData);
+        if(boundaryName==null)
+            throw new BoundaryNotFoundException("Invalid Boundary.");
+
+        CARequest caRequest = new CARequest(boundaryName,operationalData);
 
         if(groups==null){
             groups = helperMethods.findGroups(operationalData.size());

@@ -27,7 +27,7 @@ public class CAController {
         return ResponseEntity.status(HttpStatus.OK).body(caService.findAuxiliaryClusters(caRequest,neighbourHood));
     }
 
-    @RequestMapping(value = "cellularAutomata/find/findPrimary",method = {RequestMethod.POST},consumes = "application/json",produces = "application/json")
+    @RequestMapping(value = "findPrimary",method = {RequestMethod.POST},consumes = "application/json",produces = "application/json")
     ResponseEntity<Pair<ArrayList<String>,Integer>> findPrimaryClusters(
             @RequestBody CARequest caRequest,
             @RequestParam(name = "neighbourHood") Integer neighbourHood,
