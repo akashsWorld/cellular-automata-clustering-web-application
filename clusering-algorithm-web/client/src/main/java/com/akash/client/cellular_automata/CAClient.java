@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.ArrayList;
 import java.util.List;
 
-@FeignClient(name = "cellular-automata",url = "localhost:8504")
+@FeignClient(name = "cellular-automata-model")
 public interface CAClient {
 
     @RequestMapping(value = "cellularAutomata/find/findAuxiliary",method = {RequestMethod.POST},consumes = "application/json",produces = "application/json")

@@ -21,10 +21,10 @@
             <groupId>com.akash.clustering</groupId>
             <artifactId>cellular-automata-based-clustering</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.cloud</groupId>-->
-<!--            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.akash.client</groupId>
             <artifactId>client</artifactId>

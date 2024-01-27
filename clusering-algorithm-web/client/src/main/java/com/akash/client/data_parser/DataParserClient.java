@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.ArrayList;
 
-@FeignClient(name ="data-server" ,url = "localhost:8501")
+@FeignClient(name ="data-parser" )
 public interface DataParserClient {
 
     @RequestMapping (value = "parser/parseData/uniqueConfiguration",method = {RequestMethod.POST}, consumes = "application/json",produces = "application/json")

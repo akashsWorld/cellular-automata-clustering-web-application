@@ -1,6 +1,7 @@
 package com.akash.cluster;
 
 
+import com.akash.caclustering.clusteringException.RuleInvalidException;
 import com.akash.client.error.ErrorMessage;
 import com.akash.client.exception.DataInvalidException;
 import com.akash.client.exception.ResponseInvalidException;
@@ -32,6 +33,22 @@ public class ClusterFinderExceptionHandler extends ResponseEntityExceptionHandle
         return ResponseEntity.
                 status(HttpStatus.BAD_REQUEST).
                 body(new ErrorMessage(HttpStatus.BAD_REQUEST, nullPointerException.getMessage()));
+    }
+
+    @ExceptionHandler(value = {RuleInvalidException.class})
+    protected ResponseEntity<ErrorMessage> ruleInvalidExceptionHandler(RuleInvalidException ruleInvalidException,
+                                                                       WebRequest webRequest){
+        return ResponseEntity.
+                status(HttpStatus.BAD_REQUEST).
+                body(new ErrorMessage(HttpStatus.BAD_REQUEST, ruleInvalidException.getMessage()));
+    }
+
+    @ExceptionHandler(value = {Exception.class})
+    protected ResponseEntity<ErrorMessage> globalExceptionHandler(Exception e,
+                                                                  WebRequest request){
+        return ResponseEntity.
+                status(HttpStatus.BAD_REQUEST).
+                body(new ErrorMessage(HttpStatus.BAD_REQUEST, e.getMessage()));
     }
 
 }

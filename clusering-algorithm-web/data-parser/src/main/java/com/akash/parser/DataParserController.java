@@ -18,7 +18,7 @@ public class DataParserController {
 
     @PostMapping("parse")
     public ResponseEntity<ParseDataResponse> parseData(@RequestBody ArrayList<ArrayList<String>> rawData,
-                                                                       @RequestParam Integer divisions){
+                                                                       @RequestParam("divisions") Integer divisions){
         ParseDataResponse parseDataResponse = dataParserService.convertNumericalDataToCategoricalData(rawData,divisions);
 
         return ResponseEntity.status(HttpStatus.OK).body(parseDataResponse);

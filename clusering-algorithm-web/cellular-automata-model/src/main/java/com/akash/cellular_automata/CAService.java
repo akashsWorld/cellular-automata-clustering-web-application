@@ -21,7 +21,6 @@ public class CAService {
     public Pair<ArrayList<String>,Integer> findAuxiliaryClusters(CARequest caRequest, Integer neighbourHood)
             throws RuleInvalidException {
 //        TODO: add data filter.
-
         Clusters  clusters = new ClusterFinder(neighbourHood, caHelper.getBoundary(caRequest.getBoundaryName()));
         
         return clusters.getClusters(caRequest.getOperationalData());

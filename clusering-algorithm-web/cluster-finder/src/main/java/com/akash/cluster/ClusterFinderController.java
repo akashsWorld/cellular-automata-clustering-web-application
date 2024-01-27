@@ -17,13 +17,13 @@ public class ClusterFinderController {
 
     private final ClusterFinderService clusterFinderService;
 
-    @PostMapping("levelZero")
-    public ResponseEntity<ArrayList<ArrayList<Integer>>> findClustersAtLevelZero(@RequestBody ArrayList<ArrayList<String>> operationalData){
+    @GetMapping("levelZero")
+    public ResponseEntity<ClusterFinderResponse> findClustersAtLevelZero(@RequestBody ArrayList<ArrayList<String>> operationalData){
         return ResponseEntity.ok(clusterFinderService.findClusterAtLevelZero(operationalData));
     }
 
     @GetMapping("levelOne")
-    public ResponseEntity<ArrayList<ArrayList<Integer>>> findClustersAtLevelOne(
+    public ResponseEntity<ClusterFinderResponse> findClustersAtLevelOne(
             @RequestBody ArrayList<ArrayList<String>> operationalData,
             @RequestParam(name = "groups",required = false) List<Integer> groups,
             @RequestParam(name = "neighbourHood",required = false,defaultValue = "3") Integer neighbourHood,
@@ -45,7 +45,7 @@ public class ClusterFinderController {
     }
 
     @GetMapping("levelTwo")
-    public ResponseEntity<ArrayList<ArrayList<Integer>>> findClustersAtLevelTwo(
+    public ResponseEntity<ClusterFinderResponse> findClustersAtLevelTwo(
             @RequestBody CAMergeClustersRequest mergeClusterRequest,
             @RequestParam(name = "boundary") String boundaryName,
             @RequestParam(name = "neighbourHood") Integer neighbourHood,

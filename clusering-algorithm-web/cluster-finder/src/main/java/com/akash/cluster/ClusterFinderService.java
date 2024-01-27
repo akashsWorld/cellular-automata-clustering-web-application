@@ -15,6 +15,8 @@ import com.akash.client.exception.ResponseInvalidException;
 import com.akash.client.merge_cluster.MergeArrayRequest;
 import com.akash.client.merge_cluster.MergeClusterRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -36,9 +38,10 @@ public class ClusterFinderService {
     private final ClusterHelperMethods helperMethods;
 
     private final RestTemplate restTemplate;
-    private static final String MERGE_CLUSTER_URL ="localhost:8505/mergeCluster/merge/";
+    private static final String MERGE_CLUSTER_URL ="/mergeCluster/merge/";
 
-    public ArrayList<ArrayList<Integer>> findClusterAtLevelZero(ArrayList<ArrayList<String>> operationalData){
+    private final LoadBalancerClient loadBalancerClient;
+    public ClusterFinderResponse findClusterAtLevelZero(ArrayList<ArrayList<String>> operationalData){
 
         if(operationalData == null || operationalData.isEmpty() ){
             throw new DataInvalidException("Data Not valid for the operation");
@@ -59,10 +62,12 @@ public class ClusterFinderService {
         ArrayList<String> uniqueConfiguration = uniqueConfigurationResponse.getBody();
         ArrayList<String> objectWiseData = objectWiseDataResponse.getBody();
 
-        return HelperUtilityMethods.convertObjectWiseDataToClusterWise(objectWiseData,uniqueConfiguration);
+        ArrayList<ArrayList<Integer>> clusters = HelperUtilityMethods.convertObjectWiseDataToClusterWise(objectWiseData,uniqueConfiguration);
+
+        return new ClusterFinderResponse(clusters.size(),clusters);
     }
 
-    public ArrayList<ArrayList<Integer>> findClusterAtLevelOne(
+    public ClusterFinderResponse findClusterAtLevelOne(
             ArrayList<ArrayList<String>> operationalData,
             Integer neighbourHood,
             List<Integer> groups,
@@ -87,10 +92,14 @@ public class ClusterFinderService {
             throw new ResponseInvalidException("The given response cluster not valid.");
         }
 
-        return Clusters.groupObjectsRespectToClusters(primaryClustersArrayIndexWiseWithClusterNumber.getBody().getFirst());
+        ArrayList<ArrayList<Integer>> clusters = Clusters.
+                groupObjectsRespectToClusters(primaryClustersArrayIndexWiseWithClusterNumber.getBody().getFirst());
+
+
+        return new ClusterFinderResponse(clusters.size(),clusters);
     }
 
-    public ArrayList<ArrayList<Integer>> findClustersAtLevelTwo(
+    public ClusterFinderResponse findClustersAtLevelTwo(
             CAMergeClustersRequest caMergeClustersRequest,
             ArrayList<Integer> selectedIndexes,
             String boundaryName,
@@ -125,8 +134,10 @@ public class ClusterFinderService {
 
         HttpEntity<MergeArrayRequest> requestEntity = new HttpEntity<>(mergeArrayRequest,httpHeaders);
 
+        ServiceInstance serviceInstance = loadBalancerClient.choose("merge-cluster");
+
         ResponseEntity<ArrayList<ArrayList<Double>>> mergeArrayResponse = restTemplate.exchange(
-                MERGE_CLUSTER_URL+"geMergeArray",
+                "http://192.168.0.104:8505"+MERGE_CLUSTER_URL+"geMergeArray",
                 HttpMethod.POST,
                 requestEntity,
                 new ParameterizedTypeReference<>() {
@@ -143,18 +154,19 @@ public class ClusterFinderService {
                 caMergeClustersRequest.getPrimaryCluster()
         );
 
-        requestEntity = new HttpEntity<>(mergeArrayRequest,httpHeaders);
+        HttpEntity<MergeClusterRequest> mergeClusterRequestEntity = new HttpEntity<>(mergeClusterRequest,httpHeaders);
 
         ResponseEntity<ArrayList<ArrayList<Integer>>> afterMergeResponse = restTemplate.exchange(
                 MERGE_CLUSTER_URL+"mergeClusters",
                 HttpMethod.POST,
-                requestEntity,
+                mergeClusterRequestEntity,
                 new ParameterizedTypeReference<>() {
                 });
 
         if(!afterMergeResponse.getStatusCode().is2xxSuccessful() || afterMergeResponse.getBody()==null)
             throw new ResponseInvalidException("Merge Array response invalid");
 
-        return afterMergeResponse.getBody();
+        ArrayList<ArrayList<Integer>> clusters = afterMergeResponse.getBody();
+        return new ClusterFinderResponse(clusters.size(),clusters);
     }
 }
