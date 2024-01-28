@@ -38,9 +38,7 @@ public class ClusterFinderService {
     private final ClusterHelperMethods helperMethods;
 
     private final RestTemplate restTemplate;
-    private static final String MERGE_CLUSTER_URL ="/mergeCluster/merge/";
-
-    private final LoadBalancerClient loadBalancerClient;
+    private static final String MERGE_CLUSTER_URL ="http://merge-cluster:8505/mergeCluster/merge/";
     public ClusterFinderResponse findClusterAtLevelZero(ArrayList<ArrayList<String>> operationalData){
 
         if(operationalData == null || operationalData.isEmpty() ){
@@ -134,10 +132,10 @@ public class ClusterFinderService {
 
         HttpEntity<MergeArrayRequest> requestEntity = new HttpEntity<>(mergeArrayRequest,httpHeaders);
 
-        ServiceInstance serviceInstance = loadBalancerClient.choose("merge-cluster");
+
 
         ResponseEntity<ArrayList<ArrayList<Double>>> mergeArrayResponse = restTemplate.exchange(
-                "http://192.168.0.104:8505"+MERGE_CLUSTER_URL+"geMergeArray",
+                MERGE_CLUSTER_URL+"geMergeArray",
                 HttpMethod.POST,
                 requestEntity,
                 new ParameterizedTypeReference<>() {
