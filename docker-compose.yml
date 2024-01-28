@@ -3,14 +3,12 @@ version: '3.1'
 services:
   csv-reader:
     image: akashvai/csv-reader:latest
-    restart: always
     ports:
       - "8001:8000"
     
   
   cluster-eureka-server:
     image: akashvai/cluster-eureka-server:latest
-    restart: always
     ports:
       - "8761:8761"
     networks:
@@ -20,7 +18,6 @@ services:
 
   api-gateway-cluster:
     image: akashvai/api-gateway-cluster:latest
-    restart: always
     ports:
       - "9788:9788"
     networks:
@@ -32,7 +29,6 @@ services:
   
   merge-cluster:
     image: akashvai/merge-cluster:latest
-    restart: always
     # ports:
     #   - "8505:8505"
     networks:
@@ -45,7 +41,6 @@ services:
 
   cellular-automata-model:
     image: akashvai/cellular-automata-model:latest
-    restart: always
     # ports:
     #   - "8504:8504"
     networks:
@@ -58,7 +53,6 @@ services:
   
   operational-data-modifier:
     image: akashvai/operational-data-modifier:latest
-    restart: always
     ports:
       - "8502:8502"
     networks:
@@ -71,7 +65,6 @@ services:
 
   data-parser:
     image: akashvai/data-parser:latest
-    restart: always
     ports:
       - "8501:8501"
     networks:
@@ -84,7 +77,6 @@ services:
 
   cluster-finder:
     image: akashvai/cluster-finder:latest
-    restart: always
     ports:
       - "8503:8503"
     networks:
