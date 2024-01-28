@@ -9,24 +9,14 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.akash.parser</groupId>
-    <artifactId>data-parser</artifactId>
+    <groupId>com.akash.gateway</groupId>
+    <artifactId>api-gateway-cluster</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.akash.clustering</groupId>
-            <artifactId>cellular-automata-based-clustering</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.akash.client</groupId>
-            <artifactId>client</artifactId>
-            <scope>compile</scope>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -47,6 +37,7 @@
             </build>
         </profile>
     </profiles>
+
 
     <build>
         <plugins>

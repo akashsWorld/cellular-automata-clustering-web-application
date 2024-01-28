@@ -6,3 +6,101 @@ services:
     restart: always
     ports:
       - "8001:8000"
+    
+  
+  cluster-eureka-server:
+    image: akashvai/cluster-eureka-server:latest
+    restart: always
+    ports:
+      - "8761:8761"
+    networks:
+      - spring
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+
+  api-gateway-cluster:
+    image: akashvai/api-gateway-cluster:latest
+    restart: always
+    ports:
+      - "9788:9788"
+    networks:
+      - spring
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - cluster-eureka-server
+  
+  merge-cluster:
+    image: akashvai/merge-cluster:latest
+    restart: always
+    # ports:
+    #   - "8505:8505"
+    networks:
+      - spring
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - cluster-eureka-server
+      - api-gateway-cluster
+
+  cellular-automata-model:
+    image: akashvai/cellular-automata-model:latest
+    restart: always
+    # ports:
+    #   - "8504:8504"
+    networks:
+      - spring
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - cluster-eureka-server
+      - api-gateway-cluster
+  
+  operational-data-modifier:
+    image: akashvai/operational-data-modifier:latest
+    restart: always
+    ports:
+      - "8502:8502"
+    networks:
+      - spring
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - cluster-eureka-server
+      - api-gateway-cluster
+
+  data-parser:
+    image: akashvai/data-parser:latest
+    restart: always
+    ports:
+      - "8501:8501"
+    networks:
+      - spring
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - cluster-eureka-server
+      - api-gateway-cluster
+
+  cluster-finder:
+    image: akashvai/cluster-finder:latest
+    restart: always
+    ports:
+      - "8503:8503"
+    networks:
+      - spring
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - cluster-eureka-server
+      - api-gateway-cluster
+      - data-parser
+      - merge-cluster
+      - cellular-automata-model
+
+networks:
+  spring: 
+    driver: bridge
+
+
+  

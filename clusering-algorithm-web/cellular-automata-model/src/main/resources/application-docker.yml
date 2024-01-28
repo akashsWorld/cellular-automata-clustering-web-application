@@ -1,0 +1,13 @@
+server:
+    port: 8504
+
+spring:
+    application:
+        name: cellular-automata-model
+    
+eureka:
+    client:
+        register-with-eureka: true
+        fetch-registry: true
+        service-url:
+            defaultZone: http://cluster-eureka-server:8761/eureka/

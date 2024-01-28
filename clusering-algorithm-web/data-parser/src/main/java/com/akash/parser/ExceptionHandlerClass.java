@@ -1,8 +1,6 @@
 package com.akash.parser;
 
-import com.akash.client.GlobalResponse;
 import com.akash.client.error.ErrorMessage;
-import com.akash.client.exception.DataInvalidException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

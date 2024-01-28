@@ -15,9 +15,11 @@ import com.akash.client.exception.ResponseInvalidException;
 import com.akash.client.merge_cluster.MergeArrayRequest;
 import com.akash.client.merge_cluster.MergeClusterRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -28,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
 public class ClusterFinderService {
 
     private final DataParserClient dataParserClient;
@@ -38,7 +39,25 @@ public class ClusterFinderService {
     private final ClusterHelperMethods helperMethods;
 
     private final RestTemplate restTemplate;
-    private static final String MERGE_CLUSTER_URL ="http://merge-cluster:8505/mergeCluster/merge/";
+
+    private final Environment environment;
+
+    private final String MERGE_CLUSTER_URL;
+
+    public ClusterFinderService(DataParserClient dataParserClient,
+                                CAClient caClient,
+                                ClusterHelperMethods helperMethods,
+                                RestTemplate restTemplate,
+                                Environment environment) {
+        this.dataParserClient = dataParserClient;
+        this.caClient = caClient;
+        this.helperMethods = helperMethods;
+        this.restTemplate = restTemplate;
+        this.environment = environment;
+        this.MERGE_CLUSTER_URL=environment.getProperty("merge.cluster.url");
+    }
+
+
     public ClusterFinderResponse findClusterAtLevelZero(ArrayList<ArrayList<String>> operationalData){
 
         if(operationalData == null || operationalData.isEmpty() ){
@@ -103,6 +122,8 @@ public class ClusterFinderService {
             String boundaryName,
             Integer neighbourHood
     ) throws RuleInvalidException {
+
+
 
         ArrayList<ArrayList<String>> selectedAttributes = helperMethods.selectAttributes(
                 caMergeClustersRequest.getOperationalData(),

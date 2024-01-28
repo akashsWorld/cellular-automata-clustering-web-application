@@ -12,7 +12,6 @@ import java.util.ArrayList;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CAMergeClustersRequest {
-
     private ArrayList<ArrayList<String>> operationalData;
     private ArrayList<ArrayList<Integer>> primaryCluster;
 }

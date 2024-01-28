@@ -1,6 +1,5 @@
 package com.akash.client.data_parser;
 
-import com.akash.client.GlobalResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;

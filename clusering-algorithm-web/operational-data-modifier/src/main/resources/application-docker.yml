@@ -1,0 +1,14 @@
+server:
+  port: 8502
+
+spring:
+  application:
+    name: data-modifier
+
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://cluster-eureka-server:8761/eureka/

@@ -1,0 +1,39 @@
+server:
+  port: 9788
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: merge-cluster
+          uri: lb://MERGE-CLUSTER
+          predicates:
+            - Path=/mergeCluster/merge/**
+
+        - id: cellular-automata-model
+          uri: lb://CELLULAR-AUTOMATA-MODEL
+          predicates:
+            - Path=/cellularAutomata/find/**
+
+        - id: cluster-finder
+          uri: lb://CLUSTER-FINDER
+          predicates:
+            - Path=/cluster/FindCluster/**
+
+        - id: data-modifier
+          uri: lb://DATA-MODIFIER
+          predicates:
+            - Path=/modifier/modify/**
+
+        - id: data-parser
+          uri: lb://DATA-PARSER
+          predicates:
+            - Path=/parser/parseData/**
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

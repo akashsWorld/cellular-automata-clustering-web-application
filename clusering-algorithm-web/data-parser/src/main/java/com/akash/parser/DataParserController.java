@@ -1,7 +1,6 @@
 package com.akash.parser;
 
 
-import com.akash.client.GlobalResponse;
 import com.akash.parser.responses.ParseDataResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
