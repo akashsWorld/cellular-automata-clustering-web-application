@@ -20,18 +20,11 @@ public class MergeService {
     }
 
     public ArrayList<ArrayList<Integer>> mergeClusters(
-            MergeClusterRequest mergeClusterRequest,
-            Integer requiredNumberCluster
+            MergeClusterRequest mergeClusterRequest
     ){
-        if(requiredNumberCluster==null){
-            return Merge.initializeMerge(
-                    mergeClusterRequest.getMergeArray(),
-                    mergeClusterRequest.getPrimaryCluster()).getFirst();
-        }
-
         return Merge.initializeMerge(
                 mergeClusterRequest.getMergeArray(),
-                mergeClusterRequest.getPrimaryCluster(),requiredNumberCluster).getFirst();
+                mergeClusterRequest.getPrimaryCluster()).getFirst();
     }
 
 

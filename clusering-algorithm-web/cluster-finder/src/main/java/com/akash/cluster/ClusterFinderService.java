@@ -1,8 +1,11 @@
 package com.akash.cluster;
 
 
+import com.akash.caclustering.boundaries.Boundaries;
+import com.akash.caclustering.clustering.ClusterFinder;
 import com.akash.caclustering.clustering.Clusters;
 import com.akash.caclustering.clusteringException.RuleInvalidException;
+import com.akash.caclustering.mergeing.Merge;
 import com.akash.caclustering.utility.HelperUtilityMethods;
 import com.akash.caclustering.utility.Pair;
 import com.akash.client.cellular_automata.CAClient;
@@ -30,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class ClusterFinderService {
 
     private final DataParserClient dataParserClient;
@@ -38,24 +42,9 @@ public class ClusterFinderService {
 
     private final ClusterHelperMethods helperMethods;
 
-    private final RestTemplate restTemplate;
+    private final MergeArrayHttpRequest mergeArrayHttpRequest;
 
-    private final Environment environment;
 
-    private final String MERGE_CLUSTER_URL;
-
-    public ClusterFinderService(DataParserClient dataParserClient,
-                                CAClient caClient,
-                                ClusterHelperMethods helperMethods,
-                                RestTemplate restTemplate,
-                                Environment environment) {
-        this.dataParserClient = dataParserClient;
-        this.caClient = caClient;
-        this.helperMethods = helperMethods;
-        this.restTemplate = restTemplate;
-        this.environment = environment;
-        this.MERGE_CLUSTER_URL=environment.getProperty("merge.cluster.url");
-    }
 
 
     public ClusterFinderResponse findClusterAtLevelZero(ArrayList<ArrayList<String>> operationalData){
@@ -118,74 +107,105 @@ public class ClusterFinderService {
 
     public ClusterFinderResponse findClustersAtLevelTwo(
             CAMergeClustersRequest caMergeClustersRequest,
-            ArrayList<Integer> selectedIndexes,
+            Integer requiredCluster,
             String boundaryName,
             Integer neighbourHood
     ) throws RuleInvalidException {
 
+        ArrayList<ArrayList<String>> operationalData = caMergeClustersRequest.getOperationalData();
+        ArrayList<ArrayList<Integer>> primaryCluster = caMergeClustersRequest.getPrimaryCluster();
 
 
-        ArrayList<ArrayList<String>> selectedAttributes = helperMethods.selectAttributes(
-                caMergeClustersRequest.getOperationalData(),
-                selectedIndexes
-                );
+        if(requiredCluster==primaryCluster.size()){
+            return new ClusterFinderResponse(primaryCluster.size(),primaryCluster);
+        }
 
-        CARequest caRequest = new CARequest(boundaryName,selectedAttributes);
+        int pre, curr=Integer.MAX_VALUE;
 
-        ResponseEntity<Pair<ArrayList<String>,Integer>> auxiliaryClusterResponse = caClient
-                .findAuxiliaryClusters(caRequest,neighbourHood);
+//                TODO: Make a request to get auxiliary cluster.
 
 
-        if(auxiliaryClusterResponse.getBody()==null)
-            throw new ResponseInvalidException("Auxiliary cluster response invalid");
+        ArrayList<ArrayList<Integer>> tempAuxiliaryCluster = mergeArrayHttpRequest
+                .getAuxiliaryCluster(operationalData,neighbourHood,boundaryName) ;
 
-        Pair<ArrayList<String>,Integer> auxiliaryClusterWithClusterNumber = auxiliaryClusterResponse.getBody();
+//                TODO: make a request to get merge array
+        ArrayList<ArrayList<Double>> tempMergeArray = mergeArrayHttpRequest.
+                getMergeArray(primaryCluster,tempAuxiliaryCluster);
 
-//        Calculate the Merge array to check merge ability.
+//                TODO: make a request to get the clusters.
+        ArrayList<ArrayList<Integer>>  tempCluster = mergeArrayHttpRequest.
+                getNewMergeList(tempMergeArray,new ArrayList<>(primaryCluster));
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        pre=tempCluster.size();
 
-        MergeArrayRequest mergeArrayRequest = new MergeArrayRequest(
-                caMergeClustersRequest.getPrimaryCluster(),
-                Clusters.groupObjectsRespectToClusters(auxiliaryClusterWithClusterNumber.getFirst())
-                );
+        ArrayList<ArrayList<Integer>> preTempClusters;
 
-        HttpEntity<MergeArrayRequest> requestEntity = new HttpEntity<>(mergeArrayRequest,httpHeaders);
+        do {
 
+            if (curr < requiredCluster) {
+                tempCluster = new ArrayList<>(primaryCluster);
+            }
 
+            tempAuxiliaryCluster = mergeArrayHttpRequest
+                    .getAuxiliaryCluster(operationalData,neighbourHood,boundaryName);
 
-        ResponseEntity<ArrayList<ArrayList<Double>>> mergeArrayResponse = restTemplate.exchange(
-                MERGE_CLUSTER_URL+"geMergeArray",
-                HttpMethod.POST,
-                requestEntity,
-                new ParameterizedTypeReference<>() {
-                });
-
-        if(!mergeArrayResponse.getStatusCode().is2xxSuccessful() || mergeArrayResponse.getBody()==null)
-            throw new ResponseInvalidException("Merge Array response invalid");
+            tempMergeArray = mergeArrayHttpRequest.getMergeArray(tempCluster,tempAuxiliaryCluster);
+            tempCluster = mergeArrayHttpRequest.getNewMergeList(tempMergeArray,new ArrayList<>(tempCluster));
+            curr = tempCluster.size();
 
 
-        ArrayList<ArrayList<Double>> mergeArray = mergeArrayResponse.getBody();
+            preTempClusters = new ArrayList<>(tempCluster);
 
-        MergeClusterRequest mergeClusterRequest = new MergeClusterRequest(
-                mergeArray,
-                caMergeClustersRequest.getPrimaryCluster()
-        );
+//                    Reset the parameters to re-clustering
+            if (curr > pre) {
+                tempCluster = new ArrayList<>(primaryCluster);
+            }
 
-        HttpEntity<MergeClusterRequest> mergeClusterRequestEntity = new HttpEntity<>(mergeClusterRequest,httpHeaders);
+            pre = curr;
 
-        ResponseEntity<ArrayList<ArrayList<Integer>>> afterMergeResponse = restTemplate.exchange(
-                MERGE_CLUSTER_URL+"mergeClusters",
-                HttpMethod.POST,
-                mergeClusterRequestEntity,
-                new ParameterizedTypeReference<>() {
-                });
+        } while (requiredCluster != curr);
 
-        if(!afterMergeResponse.getStatusCode().is2xxSuccessful() || afterMergeResponse.getBody()==null)
-            throw new ResponseInvalidException("Merge Array response invalid");
-
-        ArrayList<ArrayList<Integer>> clusters = afterMergeResponse.getBody();
-        return new ClusterFinderResponse(clusters.size(),clusters);
+        return new ClusterFinderResponse(preTempClusters.size(),preTempClusters);
     }
+
+//    public void someMethod(){
+//
+//
+//
+//
+//
+//
+//        HttpHeaders httpHeaders = new HttpHeaders();
+//        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+//
+//        HttpEntity<MergeArrayRequest> requestEntity = new HttpEntity<>(mergeArrayRequest,httpHeaders);
+//
+//        ResponseEntity<ArrayList<ArrayList<Double>>> mergeArrayResponse = restTemplate.exchange(
+//                MERGE_CLUSTER_URL+"geMergeArray",
+//                HttpMethod.POST,
+//                requestEntity,
+//                new ParameterizedTypeReference<>() {
+//                });
+//
+//        if(!mergeArrayResponse.getStatusCode().is2xxSuccessful() || mergeArrayResponse.getBody()==null)
+//            throw new ResponseInvalidException("Merge Array response invalid");
+//
+//
+//
+//        HttpEntity<MergeClusterRequest> mergeClusterRequestEntity = new HttpEntity<>(mergeClusterRequest,httpHeaders);
+//
+//        ResponseEntity<ArrayList<ArrayList<Integer>>> afterMergeResponse = restTemplate.exchange(
+//                MERGE_CLUSTER_URL+"mergeClusters",
+//                HttpMethod.POST,
+//                mergeClusterRequestEntity,
+//                new ParameterizedTypeReference<>() {
+//                });
+//
+//        if(!afterMergeResponse.getStatusCode().is2xxSuccessful() || afterMergeResponse.getBody()==null)
+//            throw new ResponseInvalidException("Merge Array response invalid");
+//
+//
+//
+//
+//    }
 }

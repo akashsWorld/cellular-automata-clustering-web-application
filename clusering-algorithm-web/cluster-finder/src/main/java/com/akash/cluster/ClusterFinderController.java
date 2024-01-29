@@ -49,11 +49,11 @@ public class ClusterFinderController {
             @RequestBody CAMergeClustersRequest mergeClusterRequest,
             @RequestParam(name = "boundary") String boundaryName,
             @RequestParam(name = "neighbourHood") Integer neighbourHood,
-            @RequestParam(name= "selectIndexes") ArrayList<Integer> selectIndexes
+            @RequestParam(name= "requiredCluster") Integer requiredCluster
     ) throws RuleInvalidException {
         return ResponseEntity.status(HttpStatus.OK).body(clusterFinderService.findClustersAtLevelTwo(
                 mergeClusterRequest,
-                selectIndexes,
+                requiredCluster,
                 boundaryName,
                 neighbourHood
         ));

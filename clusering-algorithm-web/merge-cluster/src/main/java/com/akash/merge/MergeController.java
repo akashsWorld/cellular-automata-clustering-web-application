@@ -23,9 +23,9 @@ public class MergeController {
     }
     @RequestMapping(value = "mergeClusters",method = {RequestMethod.POST},consumes = "application/json",produces = "application/json")
     public ArrayList<ArrayList<Integer>> mergeClusters (
-            @RequestBody MergeClusterRequest mergeClusterRequest,
-            @RequestParam(name = "requiredClusters",required = false,defaultValue = "2") Integer requiredCluster
+            @RequestBody MergeClusterRequest mergeClusterRequest
     ){
-        return mergeService.mergeClusters(mergeClusterRequest,requiredCluster);
+        return mergeService.mergeClusters(mergeClusterRequest);
     }
+
 }
