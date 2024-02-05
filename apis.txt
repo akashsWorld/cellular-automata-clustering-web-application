@@ -1,0 +1,84 @@
+
+Upload CSV:->
+	localhost:8001/readCsv/upload
+	
+	body:-> formData CSV file:
+	
+		dataset (paramName)
+		
+		Resquest Method: POST
+		
+
+delete one Attribute:->	
+
+	localhost:9788/modifier/modify/deleteFeature?index=0
+	
+	ArrayList<ArrayList<String>> (body)
+	
+	Request Method:- DELETE
+	
+Delete multiple Attribute:->
+
+	localhost:9788/modifier/modify/deleteFeature/2,3
+	
+	ArrayList<ArrayList<String>> (body)
+	
+	Request Method:- DELETE
+	
+
+Add One attribute to operational Data:->
+
+	localhost:9788/modifier/modify/addData
+	
+	{
+	"operationalData": ArrayList<String>,
+	"addOnData": ArrayList<ArrayList<String>>
+	}
+	
+	
+	Request Method : POST
+	
+Create Operational Data:->
+
+	localhost:9788/parser/parseData/parse?divisions=3
+	
+	{
+	ArrayList<ArrayList<String>>
+	}
+	
+	Request Method : POST
+	
+Get level Zero Data:->
+
+	localhost:9788/cluster/FindCluster/levelZero
+	
+	
+	ArrayList<ArrayList<String>> binaryOperationalData
+	
+	
+	Request Method : GET
+	
+Get Level One:->
+
+	localhost:9788/cluster/FindCluster/levelOne?groups=2,2,2&neighbourHood=3&boundary=nullBoundary
+	
+	isRandom=true (Default= false)
+	
+	ArrayList<ArrayList<String>> operational Data
+	
+	Request Method : GET
+
+Get level Two:->
+
+	localhost:9788/cluster/FindCluster/levelTwo?requiredCluster=7&neighbourHood=3&boundary=nullBoundary
+	
+	{
+	"operationalData":ArrayList<ArrayList<String>>,
+	"primaryCluster": ArrayList<ArrayList<Integer>>
+	}
+	
+	Request Method : GET
+
+	
+	
+	
