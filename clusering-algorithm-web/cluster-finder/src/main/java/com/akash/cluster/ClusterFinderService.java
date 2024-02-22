@@ -105,7 +105,7 @@ public class ClusterFinderService {
         return new ClusterFinderResponse(clusters.size(),clusters);
     }
 
-    public ClusterFinderResponse findClustersAtLevelTwo(
+    public ClusterFinderLevelTwoResponse findClustersAtLevelTwo(
             CAMergeClustersRequest caMergeClustersRequest,
             Integer requiredCluster,
             String boundaryName,
@@ -117,12 +117,22 @@ public class ClusterFinderService {
 
 
         if(requiredCluster==primaryCluster.size()){
-            return new ClusterFinderResponse(primaryCluster.size(),primaryCluster);
+//            return new (primaryCluster.size(),primaryCluster);
+
+            return ClusterFinderLevelTwoResponse.builder()
+                    .levels(0)
+                    .resets(0)
+                    .clusterNumber(primaryCluster.size())
+                    .clusters(primaryCluster)
+                    .build();
         }
+
 
         int pre, curr=Integer.MAX_VALUE;
 
 //                TODO: Make a request to get auxiliary cluster.
+
+        int levels =0,resets=0;
 
 
         ArrayList<ArrayList<Integer>> tempAuxiliaryCluster = mergeArrayHttpRequest
@@ -143,6 +153,8 @@ public class ClusterFinderService {
         do {
 
             if (curr < requiredCluster) {
+                levels=0;
+                resets++;
                 tempCluster = new ArrayList<>(primaryCluster);
             }
 
@@ -158,14 +170,23 @@ public class ClusterFinderService {
 
 //                    Reset the parameters to re-clustering
             if (curr > pre) {
+                levels=0;
+                resets++;
                 tempCluster = new ArrayList<>(primaryCluster);
             }
 
             pre = curr;
+            levels++;
 
         } while (requiredCluster != curr);
 
-        return new ClusterFinderResponse(preTempClusters.size(),preTempClusters);
+//        return new ClusterFinderResponse(preTempClusters.size(),preTempClusters);
+
+        return ClusterFinderLevelTwoResponse.builder()
+                .resets(resets)
+                .levels(levels)
+                .clusterNumber(preTempClusters.size())
+                .clusters(preTempClusters).build();
     }
 
 //    public void someMethod(){

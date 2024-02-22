@@ -45,7 +45,7 @@ public class ClusterFinderController {
     }
 
     @GetMapping("levelTwo")
-    public ResponseEntity<ClusterFinderResponse> findClustersAtLevelTwo(
+    public ResponseEntity<ClusterFinderLevelTwoResponse> findClustersAtLevelTwo(
             @RequestBody CAMergeClustersRequest mergeClusterRequest,
             @RequestParam(name = "boundary") String boundaryName,
             @RequestParam(name = "neighbourHood") Integer neighbourHood,
