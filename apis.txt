@@ -80,5 +80,17 @@ Get level Two:->
 	Request Method : GET
 
 	
+
+Validation:
+
+	localhost:9788/valid/get
+
+	method:POST
+
+	{
+		"clusterNumber": NUMBER,
+		"ca_clusters":ArrayList<ArrayList<Number>>,
+		"rawData":ArrayList<ArrayList<String>>
+	}
 	
 	
