@@ -13,16 +13,17 @@ import java.util.List;
 @RestController
 @RequestMapping("cluster/FindCluster")
 @RequiredArgsConstructor
+@CrossOrigin
 public class ClusterFinderController {
 
     private final ClusterFinderService clusterFinderService;
 
-    @GetMapping("levelZero")
+    @PostMapping("levelZero")
     public ResponseEntity<ClusterFinderResponse> findClustersAtLevelZero(@RequestBody ArrayList<ArrayList<String>> operationalData){
         return ResponseEntity.ok(clusterFinderService.findClusterAtLevelZero(operationalData));
     }
 
-    @GetMapping("levelOne")
+    @PostMapping("levelOne")
     public ResponseEntity<ClusterFinderResponse> findClustersAtLevelOne(
             @RequestBody ArrayList<ArrayList<String>> operationalData,
             @RequestParam(name = "groups",required = false) List<Integer> groups,
@@ -44,7 +45,7 @@ public class ClusterFinderController {
                 ));
     }
 
-    @GetMapping("levelTwo")
+    @PostMapping("levelTwo")
     public ResponseEntity<ClusterFinderLevelTwoResponse> findClustersAtLevelTwo(
             @RequestBody CAMergeClustersRequest mergeClusterRequest,
             @RequestParam(name = "boundary") String boundaryName,
