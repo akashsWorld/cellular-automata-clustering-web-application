@@ -16,5 +16,6 @@ public class ClusterFinderLevelTwoResponse {
     private Integer resets;
     private Integer levels;
     private Integer clusterNumber;
+    private String success;
     ArrayList<ArrayList<Integer>> clusters;
 }

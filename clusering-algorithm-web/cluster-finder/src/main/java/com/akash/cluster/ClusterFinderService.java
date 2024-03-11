@@ -127,64 +127,81 @@ public class ClusterFinderService {
                     .build();
         }
 
+        ArrayList<ArrayList<Integer>> preTempClusters = null;
 
-        int pre, curr=Integer.MAX_VALUE;
+        int levels = 0, resets = 0;
+
+
+            int maxAttempt = 0;
+
+
+            int pre, curr = Integer.MAX_VALUE;
 
 //                TODO: Make a request to get auxiliary cluster.
 
-        int levels =0,resets=0;
 
 
-        ArrayList<ArrayList<Integer>> tempAuxiliaryCluster = mergeArrayHttpRequest
-                .getAuxiliaryCluster(operationalData,neighbourHood,boundaryName) ;
+
+            ArrayList<ArrayList<Integer>> tempAuxiliaryCluster = mergeArrayHttpRequest
+                    .getAuxiliaryCluster(operationalData, neighbourHood, boundaryName);
 
 //                TODO: make a request to get merge array
-        ArrayList<ArrayList<Double>> tempMergeArray = mergeArrayHttpRequest.
-                getMergeArray(primaryCluster,tempAuxiliaryCluster);
+            ArrayList<ArrayList<Double>> tempMergeArray = mergeArrayHttpRequest.
+                    getMergeArray(primaryCluster, tempAuxiliaryCluster);
 
 //                TODO: make a request to get the clusters.
-        ArrayList<ArrayList<Integer>>  tempCluster = mergeArrayHttpRequest.
-                getNewMergeList(tempMergeArray,new ArrayList<>(primaryCluster));
+            ArrayList<ArrayList<Integer>> tempCluster = mergeArrayHttpRequest.
+                    getNewMergeList(tempMergeArray, new ArrayList<>(primaryCluster));
 
-        pre=tempCluster.size();
-
-        ArrayList<ArrayList<Integer>> preTempClusters;
-
-        do {
-
-            if (curr < requiredCluster) {
-                levels=0;
-                resets++;
-                tempCluster = new ArrayList<>(primaryCluster);
-            }
-
-            tempAuxiliaryCluster = mergeArrayHttpRequest
-                    .getAuxiliaryCluster(operationalData,neighbourHood,boundaryName);
-
-            tempMergeArray = mergeArrayHttpRequest.getMergeArray(tempCluster,tempAuxiliaryCluster);
-            tempCluster = mergeArrayHttpRequest.getNewMergeList(tempMergeArray,new ArrayList<>(tempCluster));
-            curr = tempCluster.size();
+            pre = tempCluster.size();
 
 
-            preTempClusters = new ArrayList<>(tempCluster);
+            do {
+
+                if (curr < requiredCluster) {
+                    levels = 0;
+                    resets++;
+                    tempCluster = new ArrayList<>(primaryCluster);
+                }
+
+                tempAuxiliaryCluster = mergeArrayHttpRequest
+                        .getAuxiliaryCluster(operationalData, neighbourHood, boundaryName);
+
+                tempMergeArray = mergeArrayHttpRequest.getMergeArray(tempCluster, tempAuxiliaryCluster);
+                tempCluster = mergeArrayHttpRequest.getNewMergeList(tempMergeArray, new ArrayList<>(tempCluster));
+                curr = tempCluster.size();
+
+
+                preTempClusters = new ArrayList<>(tempCluster);
 
 //                    Reset the parameters to re-clustering
-            if (curr > pre) {
-                levels=0;
-                resets++;
-                tempCluster = new ArrayList<>(primaryCluster);
-            }
+                if (curr > pre) {
+                    levels = 0;
+                    resets++;
+                    tempCluster = new ArrayList<>(primaryCluster);
+                    maxAttempt++;
+                }
 
-            pre = curr;
-            levels++;
+                pre = curr;
+                levels++;
 
-        } while (requiredCluster != curr);
+            } while (requiredCluster != curr && maxAttempt<10);
 
 //        return new ClusterFinderResponse(preTempClusters.size(),preTempClusters);
+
+        if(requiredCluster != curr){
+            return ClusterFinderLevelTwoResponse.builder()
+                    .resets(resets)
+                    .levels(levels)
+                    .success("NO")
+                    .clusterNumber(preTempClusters.size())
+                    .clusters(preTempClusters).build();
+        }
 
         return ClusterFinderLevelTwoResponse.builder()
                 .resets(resets)
                 .levels(levels)
+                .success("YES")
                 .clusterNumber(preTempClusters.size())
                 .clusters(preTempClusters).build();
     }
