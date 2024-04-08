@@ -1,5 +1,8 @@
 package com.akash.cluster.DTOS;
 
-public class ClusterDTO {
+import java.util.ArrayList;
 
-}
+public record ClusterDTO(Integer clusterNumber,
+                         Long levels,
+                         ArrayList<ArrayList<Integer>> clusters
+                         ) { }

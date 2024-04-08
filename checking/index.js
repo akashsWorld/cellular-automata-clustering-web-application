@@ -31,7 +31,7 @@ const findBestResult = async (data, clusterNumber) => {
       };
 
       const levelTwoResponse = await fetch(
-        `http://localhost:9788/cluster/FindCluster/levelTwo?requiredCluster=${clusterNumber}&neighbourHood=3&boundary=nullBoundary`,
+        `http://localhost:8009/api/v1/cluster/levelTwo?requiredCluster=3&neighbourHood=2&boundary=nullBoundary`,
         {
           method: "POST",
           headers: {

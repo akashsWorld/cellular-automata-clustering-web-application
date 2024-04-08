@@ -71,6 +71,8 @@ Get Level One:->
 Get level Two:->
 
 	localhost:9788/cluster/FindCluster/levelTwo?requiredCluster=7&neighbourHood=3&boundary=nullBoundary
+
+	localhost:8009/api/v1/cluster/levelTwo?requiredCluster=3&neighbourHood=2&boundary=nullBoundary
 	
 	{
 	"operationalData":ArrayList<ArrayList<String>>,
